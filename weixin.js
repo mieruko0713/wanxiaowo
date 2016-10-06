@@ -1,5 +1,7 @@
 'use strict'
-
+var config = require("./config");
+var Wechat = require("./wechat/wechat");
+var wechatApi = new Wechat(config.wechat);
 exports.reply = function* (next) {
 	var message = this.weixin;
 	if(message.MsgType === "event") {
@@ -52,8 +54,53 @@ exports.reply = function* (next) {
 				picUrl:""
 			}];
 		}
-		this.body = reply;
+		else if (content==="5") {
+		var data = yield wechatApi.uploadMaterial("image",__dirname+"/2.jpg");
+		reply = {
+			msgType:"image",
+			media_id:data.media_id
+		    };
+	    }
+	    else if (content === "6") {
+	    	var data = yield wechatApi.uploadMaterial("video",__dirname+"/6.mp4");
+	    	reply = {
+	    		msgType:"video",
+	    		title:"回复视频内容",
+	    		description:"打个篮球玩玩 ",
+	    		media_id: data.media_id
+	    	}
+	    }
+	    else if (content === "7") {
+	    	var data = yield wechatApi.uploadMaterial("image",__dirname+"/2.jpg");
+	    	reply = {
+	    		msgType:"music",
+	    		title:"回复音乐内容",
+	    		description:"放松一下",
+	    		musicUrl:"http://mpge.5nd.com/2015/2015-9-12/66325/1.mp3",
+	    		thumbMediaId: data.media_id
+	    	}
+	    }
+	    else if (content === "8") {
+		    var data = yield wechatApi.uploadMaterial("image",__dirname+"/2.jpg",{type:"image"});
+		    console.log(data);
+		    reply = {
+		    	msgType:"image",
+		    	media_id:data.media_id
+		    }
+	    }
+	    else if (content === "9") {
+		    var data = yield wechatApi.uploadMaterial("video",__dirname+"/6.mp4",{type:"video",description:'{"title":"Really a nice place","introduction":"never think"}'});
+		    console.log(data);
+		    reply = {
+		    	msgType:"video",
+		    	media_id:data.media_id,
+		    	title:"回复视频内容",
+		    	description:"打个篮球玩玩"
+		    }
+	    }
+	    this.body = reply;
 	}
+
 
 	yield next;
 }

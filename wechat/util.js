@@ -54,7 +54,7 @@ exports.tpl = function(content,message) {
     if(Array.isArray(content)) {
     	type = "news";
     }
-    type = content.MsgType || type;
+    type = content.msgType || type;
     info.content = content;
     info.createTime = new Date().getTime();
     info.msgType = type;
